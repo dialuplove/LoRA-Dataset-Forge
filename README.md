@@ -26,12 +26,15 @@ git clone https://github.com/YOUR_USERNAME/lora-dataset-forge.git
 cd lora-dataset-forge
 
 # Install in development mode
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -e ".[dev]"
 ```
 
 ### Requirements
 
-- Python 3.10+
+- Python 3.11+
 - An OpenAI API key (for caption generation only)
 
 ## Quick Start
