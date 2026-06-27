@@ -1,0 +1,73 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local app/runtime state
+forge.db
+*.sqlite
+*.sqlite3
+input_manifest.json
+
+# Private/generated LoRA Dataset Forge data
+source/
+working/
+exports/
+duplicates/
+rejected/
+reports/generated/
+
+# Private/generated image datasets
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.heic
+*.tiff
+*.bmp
+
+# Allow intentional docs/assets images
+!docs/**/*.jpg
+!docs/**/*.jpeg
+!docs/**/*.png
+!docs/**/*.webp
+!assets/**/*.jpg
+!assets/**/*.jpeg
+!assets/**/*.png
+!assets/**/*.webp
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Obsidian local vault/editor metadata
+.obsidian/
+
+# Node/frontend tooling if added later
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Scratch notes you do not want in source control
+Kiro Prompt.md
+Untitled.md
