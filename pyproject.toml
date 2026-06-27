@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lora-dataset-forge"
+version = "0.1.0"
+description = "Local-first CLI for preparing LoRA image datasets."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE.md" }
+authors = [{ name = "LoRA Dataset Forge contributors" }]
+dependencies = [
+  "typer>=0.12",
+  "rich>=13.7",
+  "pydantic>=2.7",
+  "pillow>=10.3",
+  "piexif>=1.1",
+  "imagehash>=4.3",
+  "python-dotenv>=1.0",
+  "openai>=1.35",
+  "numpy>=1.26",
+  "opencv-python-headless>=4.9",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2",
+  "hypothesis>=6.100",
+]
+
+[project.scripts]
+lora-forge = "lora_forge.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lora_forge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+

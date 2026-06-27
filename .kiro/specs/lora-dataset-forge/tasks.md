@@ -12,9 +12,10 @@ Tasks are ordered for incremental progress: foundational modules first (config, 
   - [ ] 1.1 Create Python package structure and dependencies
     - Create `src/lora_forge/` package with `__init__.py`
     - Create `pyproject.toml` with dependencies: typer, rich, pydantic, pillow, piexif, imagehash, python-dotenv, openai, numpy, opencv-python-headless
-    - Create dev dependencies: pytest, hypothesis, pytest-tmp-path
+    - Create dev dependencies: pytest, hypothesis
     - Create `src/lora_forge/utils.py` with shared utilities (path helpers, rich formatting, dry-run context manager)
-    - _Requirements: 1.1_
+    - The dry-run context manager must be implemented here so all subsequent CLI commands can use it from the start; it gates file I/O, DB writes, and API calls, and prefixes output with `[DRY RUN]`
+    - _Requirements: 1.1, 15.1, 15.2, 15.3, 15.4_
 
   - [ ] 1.2 Implement configuration module (`config.py`)
     - Define Pydantic models: `QualityConfig`, `CaptionLintConfig`, `DedupeConfig`, `ExportConfig`, `ProjectConfig`
@@ -293,8 +294,7 @@ Tasks are ordered for incremental progress: foundational modules first (config, 
     - Implement `get_adapter(target)` factory
     - Implement `export_all()` for `--target all`
     - Validate pre-export: fail if any accepted working image lacks a caption (unless `--allow-missing-captions`)
-    - Record `export_runs` and `export_items` in DB per target and per image
-    - Update Image_Record to note export completion
+    - Record `export_runs` and `export_items` in DB per target and per image; export state lives in these tables, not on the `images` row
     - _Requirements: 13.1, 13.5, 13.7, 13.8, 13.9_
 
   - [ ] 12.5 Wire `lora-forge export` CLI command
@@ -320,11 +320,11 @@ Tasks are ordered for incremental progress: foundational modules first (config, 
     - _Requirements: 14.1_
 
 - [ ] 14. Implement cross-cutting concerns
-  - [ ] 14.1 Implement dry-run mode across all commands
-    - Implement dry-run context that gates all file I/O, DB writes, and API calls
-    - Prefix all planned actions with `[DRY RUN]` in output
+  - [ ] 14.1 Audit and harden dry-run mode across all commands
+    - Verify the dry-run context (implemented in 1.1) is correctly applied in every CLI command
+    - Ensure no command bypasses the context for file I/O, DB writes, or API calls
     - For `init --dry-run`: display project structure that would be created
-    - Verify dry-run applies to all previously implemented commands
+    - Add integration test confirming `[DRY RUN]` prefix on all output lines
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5_
 
   - [ ] 14.2 Implement status command
@@ -366,11 +366,12 @@ Tasks are ordered for incremental progress: foundational modules first (config, 
 
 ## Notes
 
-- Tasks marked with `*` are optional and can be skipped for faster MVP
+- Tasks marked with `*` include property-based tests. The following are **required guardrails** and must not be skipped: 1.3 (config/token validation), 3.4 (scanner), 4.3 (source immutability), 8.5 (EXIF/rename), 10.5 (caption reuse), 12.6 (export structure), 14.6 (dry-run/resume). Tasks 5.3, 6.3, 7.3, and 11.3 may be deferred if needed for velocity but are strongly recommended.
+- The dry-run context is built in task 1.1 and enforced incrementally from the first CLI command onward; task 14.1 is the final audit pass.
+- Export state is tracked in `export_runs` and `export_items` tables, not on the `images` row. `lifecycle_state` on images is derived/display only.
 - Each task references specific requirements for traceability
 - Checkpoints ensure incremental validation
 - Property tests validate universal correctness properties from the design document
-- Unit tests validate specific examples and edge cases
 - All OpenAI API tests use mocked responses — no live API key required for testing
 - The implementation language is Python throughout (Pydantic, typer, Pillow, piexif, imagehash, hypothesis)
 - OneTrainer is the default export target; kohya_ss is secondary
